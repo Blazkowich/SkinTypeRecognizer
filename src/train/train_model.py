@@ -5,16 +5,17 @@ from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Input
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras import Model
 
+
 def train_model(train_dir, valid_dir, model_path):
     img_width, img_height = 150, 150
 
     train_datagen = ImageDataGenerator(
-        rescale=1./255,
+        rescale=1. / 255,
         shear_range=0.2,
         zoom_range=0.2,
         horizontal_flip=True)
 
-    valid_datagen = ImageDataGenerator(rescale=1./255)
+    valid_datagen = ImageDataGenerator(rescale=1. / 255)
 
     train_generator = train_datagen.flow_from_directory(
         train_dir,
@@ -41,13 +42,14 @@ def train_model(train_dir, valid_dir, model_path):
 
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
-    model.fit(train_generator, epochs=10, validation_data=valid_generator)
+    model.fit(train_generator, epochs=20, validation_data=valid_generator)
 
     model.save(model_path)
 
+
 if __name__ == '__main__':
-    train_dir = r'D:\Nugzar\Oily-Dry-Skin-Types\train'
-    valid_dir = r'D:\Nugzar\Oily-Dry-Skin-Types\valid'
-    model_path = 'skin_type_model.h5'
+    train_dir = r'D:\Nugzar\Oily-Dry-Skin-Dataset\train'
+    valid_dir = r'D:\Nugzar\Oily-Dry-Skin-Dataset\valid'
+    model_path = 'skin_type_model_second.h5'
 
     train_model(train_dir, valid_dir, model_path)

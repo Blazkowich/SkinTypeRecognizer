@@ -57,7 +57,7 @@ def analyze_skin_type():
                     eye_height_at_camera = eh
                     distance = calculate_distance(eye_height_at_camera)
 
-                    if 10 <= distance <= 15:
+                    if 15 <= distance <= 25:
                         start_time = time.time()
                         while (time.time() - start_time) < 7:
                             for gif_frame in gif_frames:
@@ -80,7 +80,7 @@ def analyze_skin_type():
                         prediction = predict_image(frame)
                         normal_skin, oily_skin, dry_skin = prediction
 
-                        prediction_text = f"Normal: {normal_skin:.2%}, Oily: {oily_skin:.2%}, Dry: {dry_skin:.2%}"
+                        prediction_text = f"         {normal_skin:.2%}\n\n\n\n\n\n\n         {dry_skin:.2%}\n\n\n\n\n\n\n         {oily_skin:.2%}"
                         display_time = time.time()
                         analysis_done = True
                         break
@@ -103,11 +103,27 @@ def analyze_skin_type():
                     value=(0, 0, 0)
                 )
 
-                text_size, _ = cv2.getTextSize(prediction_text, cv2.FONT_HERSHEY_SIMPLEX, 1, 2)
-                text_x = (window_width - text_size[0]) // 2
-                text_y = (window_height + text_size[1]) // 2
-                cv2.putText(face_img_padded, prediction_text, (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, 1,
-                            (1, 1, 1), 2, cv2.LINE_AA)
+                lines = prediction_text.split('\n')
+                font_scale = 1.5
+                font_thickness = 2
+                font = cv2.FONT_HERSHEY_SIMPLEX
+
+                # Calculate total text height
+                text_height = 0
+                for line in lines:
+                    text_size, _ = cv2.getTextSize(line, font, font_scale, font_thickness)
+                    text_height += text_size[1] + 10  # Adding some space between lines
+
+                # Start position for the first line
+                y0 = (window_height - text_height) // 2
+
+                for i, line in enumerate(lines):
+                    text_size, _ = cv2.getTextSize(line, font, font_scale, font_thickness)
+                    text_x = (window_width - text_size[0]) // 2
+                    text_y = y0 + (i + 1) * text_size[1] + i * 10
+
+                    cv2.putText(face_img_padded, line, (text_x, text_y), font, font_scale,
+                                (1, 1, 1), font_thickness, cv2.LINE_AA)
 
                 # Display the final image for 15 seconds
                 start_display_time = time.time()
