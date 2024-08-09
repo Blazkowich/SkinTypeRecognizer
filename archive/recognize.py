@@ -3,7 +3,7 @@ import numpy as np
 from tensorflow.keras.models import load_model
 import os
 
-model_path = r'train\skin_type_model.h5'
+model_path = r'../src/train/skin_type_model.h5'
 img_width, img_height = 150, 150
 
 model = load_model(model_path)
