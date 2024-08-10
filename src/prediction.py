@@ -1,14 +1,11 @@
-import cv2
-import numpy as np
-from tensorflow.keras.models import load_model
+import os
+import inference
 
-img_width, img_height = 150, 150
-model_path = r'train/skin_type_model.h5'
-model = load_model(model_path)
+# Set API key
+os.environ["ROBOFLOW_API_KEY"] = "8Qs7F54MSyWFOmMq8Yva"
 
-
-def predict_image(image):
-    image = cv2.resize(image, (img_width, img_height))
-    image = np.expand_dims(image, axis=0) / 255.0
-    prediction = model.predict(image)[0]
-    return prediction
+def predict_image(image_path):
+    model = inference.get_roboflow_model("skin-type-tgow5/1")
+    results = model.infer(image=image_path)
+    predictions = results[0].predictions
+    return {label: prediction.confidence for label, prediction in predictions.items()}
