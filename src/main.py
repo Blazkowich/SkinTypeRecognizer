@@ -1,10 +1,12 @@
 from face_detection import are_eyes_detected, calculate_distance
-from prediction import predict_image
 import numpy as np
 import cv2
 import time
 from load_gif import load_gif_frames
+from prediction import predict_image
 from PIL import Image
+import inference
+import os
 
 
 def analyze_skin_type():
@@ -57,7 +59,7 @@ def analyze_skin_type():
                     eye_height_at_camera = eh
                     distance = calculate_distance(eye_height_at_camera)
 
-                    if 15 <= distance <= 25:
+                    if 10 <= distance <= 15:
                         start_time = time.time()
                         while (time.time() - start_time) < 7:
                             for gif_frame in gif_frames:
@@ -77,10 +79,26 @@ def analyze_skin_type():
                                     cv2.destroyAllWindows()
                                     return
 
-                        prediction = predict_image(frame)
-                        normal_skin, oily_skin, dry_skin = prediction
+                        # Save the frame to disk to use for prediction
+                        temp_image_path = 'temp_image.jpg'
+                        cv2.imwrite(temp_image_path, frame)
+                        predictions = predict_image(temp_image_path)
 
-                        prediction_text = f"         {normal_skin:.2%}\n\n\n\n\n\n\n         {dry_skin:.2%}\n\n\n\n\n\n\n         {oily_skin:.2%}"
+                        # Extract and normalize predictions
+                        normal_skin = predictions.get('normal', 0)
+                        oily_skin = predictions.get('oily', 0)
+                        dry_skin = predictions.get('dry', 0)
+                        combined_skin = predictions.get('combination', 0)
+
+                        total = normal_skin + oily_skin + dry_skin + combined_skin
+                        if total > 0:
+                            normal_skin = (normal_skin / total) * 100
+                            oily_skin = (oily_skin / total) * 100
+                            dry_skin = (dry_skin / total) * 100
+                            combined_skin = (combined_skin / total) * 100
+
+                        prediction_text = f"{combined_skin:.2f}%\n\n\n\n         {normal_skin:.2f}%\n\n\n\n         {dry_skin:.2f}%\n\n\n\n         {oily_skin:.2f}%"
+                        print(f"{combined_skin:.2f}%\n{normal_skin:.2f}%\n{dry_skin:.2f}%\n{oily_skin:.2f}%")
                         display_time = time.time()
                         analysis_done = True
                         break
