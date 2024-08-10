@@ -79,12 +79,8 @@ def analyze_skin_type():
                                     cv2.destroyAllWindows()
                                     return
 
-                        # Save the frame to disk to use for prediction
-                        temp_image_path = 'temp_image.jpg'
-                        cv2.imwrite(temp_image_path, frame)
-                        predictions = predict_image(temp_image_path)
+                        predictions = predict_image(frame)
 
-                        # Extract and normalize predictions
                         normal_skin = predictions.get('normal', 0)
                         oily_skin = predictions.get('oily', 0)
                         dry_skin = predictions.get('dry', 0)
@@ -97,7 +93,10 @@ def analyze_skin_type():
                             dry_skin = (dry_skin / total) * 100
                             combined_skin = (combined_skin / total) * 100
 
-                        prediction_text = f"{combined_skin:.2f}%\n\n\n\n         {normal_skin:.2f}%\n\n\n\n         {dry_skin:.2f}%\n\n\n\n         {oily_skin:.2f}%"
+                        prediction_text = (f"combined-{combined_skin:.2f}%\n\n\n\n         "
+                                           f"normal-{normal_skin:.2f}%\n\n\n\n         "
+                                           f"dry-{dry_skin:.2f}%\n\n\n\n         "
+                                           f"oily-{oily_skin:.2f}%")
                         print(f"{combined_skin:.2f}%\n{normal_skin:.2f}%\n{dry_skin:.2f}%\n{oily_skin:.2f}%")
                         display_time = time.time()
                         analysis_done = True
