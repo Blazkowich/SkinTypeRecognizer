@@ -1,5 +1,6 @@
 import cv2
-import time
+import asyncio
+import threading
 import cvzone
 from prediction import predict_image
 from cvzone.FaceMeshModule import FaceMeshDetector
@@ -13,6 +14,11 @@ def predict_skin_type(frame):
     predictions = predict_image(frame)
 
 
+async def async_predict_skin_type(frame):
+    loop = asyncio.get_running_loop()
+    await loop.run_in_executor(None, predict_skin_type, frame)
+
+
 def resize_window_aspect_ratio(window_name, width, height):
     """Resize window to maintain a 9:16 aspect ratio."""
     aspect_ratio = 9 / 16
@@ -22,7 +28,7 @@ def resize_window_aspect_ratio(window_name, width, height):
     cv2.resizeWindow(window_name, width, height)
 
 
-def analyze_skin_type():
+async def analyze_skin_type():
     global predictions
 
     cap = cv2.VideoCapture(1)
@@ -63,7 +69,8 @@ def analyze_skin_type():
             print(f"Distance: {distance} cm")
 
             if 20 <= distance <= 30:
-                predict_skin_type(frame)
+                # Start a new thread to handle the prediction asynchronously
+                asyncio.create_task(async_predict_skin_type(frame))
 
                 # Use the latest predictions to update the display text
                 normal_skin = predictions.get('normal', 0)
@@ -106,4 +113,5 @@ def analyze_skin_type():
 
 
 if __name__ == "__main__":
-    analyze_skin_type()
+    # Run the analysis in an asynchronous event loop
+    asyncio.run(analyze_skin_type())
