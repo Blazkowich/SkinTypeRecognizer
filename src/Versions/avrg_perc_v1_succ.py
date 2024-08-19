@@ -1,8 +1,9 @@
 import cv2
 import time
 import cvzone
-from prediction import predict_image
+from src.prediction import predict_image
 from cvzone.FaceMeshModule import FaceMeshDetector
+from src.average_percent import average_percentages
 
 # Shared variable to store prediction results
 predictions = {}
@@ -94,11 +95,20 @@ def analyze_skin_type():
 
         cv2.imshow(window_name, frame)
 
+        # Maintain the 9:16 aspect ratio even when resizing
         resize_window_aspect_ratio(window_name, initial_width, initial_height)
 
         key = cv2.waitKey(1) & 0xFF
         if key == ord('q'):
             break
+
+    # Collect and print average percentages
+    avg_combined, avg_normal, avg_dry, avg_oily = average_percentages(predictions)
+    avg_prediction_text = (f"Avg C: {avg_combined:.2f}%-"
+                           f"N: {avg_normal:.2f}%-"
+                           f"D: {avg_dry:.2f}%-"
+                           f"O: {avg_oily:.2f}%")
+    print(avg_prediction_text)
 
     cap.release()
     cv2.destroyAllWindows()
