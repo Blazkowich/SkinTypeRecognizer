@@ -1,5 +1,6 @@
 import cv2
 
+
 def get_available_cameras():
     available_cameras = []
     # Check for 5 cameras
@@ -9,6 +10,7 @@ def get_available_cameras():
             available_cameras.append(i)
             cap.release()
     return available_cameras
+
 
 cameras = get_available_cameras()
 if cameras:
