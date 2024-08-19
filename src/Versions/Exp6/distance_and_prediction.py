@@ -1,7 +1,9 @@
+# distance_prediction.py
 import cv2
 from src.prediction import predict_image
 from cvzone.FaceMeshModule import FaceMeshDetector
 from concurrent.futures import ThreadPoolExecutor
+from global_data import global_prediction_results, results_lock
 
 
 class DistanceAndPrediction:
@@ -9,8 +11,8 @@ class DistanceAndPrediction:
         self.result_queue = result_queue
         self.executor = ThreadPoolExecutor(max_workers=1)
         self.detector = FaceMeshDetector(maxFaces=1)
-        self.W = 6.3  # The actual width of the object (in cm)
-        self.f = 1500  # Pre-calculated focal length
+        self.W = 6.3
+        self.f = 1500
 
     def calculate_distance(self, frame):
         """Calculate distance from the face."""
@@ -34,7 +36,10 @@ class DistanceAndPrediction:
         """Predict skin type and store results."""
         predictions = predict_image(frame)
         formatted_results = self.format_prediction_results(predictions)
-        self.result_queue.put(formatted_results)
+
+        with results_lock:
+            global_prediction_results[:] = formatted_results
+            self.result_queue.put(formatted_results)
 
     @staticmethod
     def format_prediction_results(predictions):
