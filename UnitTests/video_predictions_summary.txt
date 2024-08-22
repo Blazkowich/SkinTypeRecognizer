@@ -1,0 +1,7 @@
+Overall Summary of Predictions:
+combination: 18.74%
+dry: 56.28%
+normal: 24.67%
+oily: 0.30%
+
+--------------------------------------------------
