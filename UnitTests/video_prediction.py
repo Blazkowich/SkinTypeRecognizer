@@ -5,6 +5,7 @@ import inference
 # Set API key
 os.environ["ROBOFLOW_API_KEY"] = "8Qs7F54MSyWFOmMq8Yva"
 
+
 def predict_image(model, frame, num_predictions=10):
     """Perform multiple predictions on a single frame."""
     predictions_list = []
@@ -21,6 +22,7 @@ def predict_image(model, frame, num_predictions=10):
 
     return predictions_list
 
+
 def summarize_predictions(predictions_list):
     """Summarize predictions from multiple runs."""
     summary = {label: [] for label in predictions_list[0]}  # Initialize summary dictionary
@@ -31,6 +33,7 @@ def summarize_predictions(predictions_list):
 
     summarized_results = {label: sum(confidences) / len(confidences) for label, confidences in summary.items()}
     return summarized_results
+
 
 def summarize_all_predictions(all_summarized_results):
     """Summarize predictions from all frames in the video."""
@@ -44,6 +47,7 @@ def summarize_all_predictions(all_summarized_results):
     total_confidence = sum(combined_summary.values())
     overall_summary = {label: (confidence / total_confidence) for label, confidence in combined_summary.items()}
     return overall_summary
+
 
 def process_video(video_path, output_file, num_predictions=10):
     """Process a video file and write overall predictions summary to a text file."""
@@ -86,8 +90,9 @@ def process_video(video_path, output_file, num_predictions=10):
     except Exception as e:
         print(f"Error occurred while processing the video: {e}")
 
+
 if __name__ == "__main__":
-    video_path = r"D:\Nugzar\repo\SkinTypeRecognizer\Assets\dry.mp4"  # Path to the video file
+    video_path = r"D:\Nugzar\repo\SkinTypeRecognizer\Assets\oil-vid3.mp4"  # Path to the video file
     output_file = 'video_predictions_summary.txt'
 
     process_video(video_path, output_file)

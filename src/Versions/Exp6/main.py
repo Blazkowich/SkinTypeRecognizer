@@ -23,7 +23,7 @@ def add_text_to_frame(frame, texts):
 
 
 def main():
-    vs = cv2.VideoCapture(1)
+    vs = cv2.VideoCapture(0)
 
     frame_queue = multiprocessing.Queue()
     result_queue = multiprocessing.Queue()

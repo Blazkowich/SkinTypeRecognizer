@@ -22,7 +22,7 @@ def main():
     while True:
         grabbed, frame = vs.read()
         if grabbed and frame is not None:
-            #frame = cv2.flip(frame, 1)
+            # frame = cv2.flip(frame, 1)
 
             frame_queue.put(frame)
 

@@ -1,6 +1,6 @@
 import time
 import cv2
-from src.prediction import predict_image
+from prediction import predict_image
 from cvzone.FaceMeshModule import FaceMeshDetector
 from concurrent.futures import ThreadPoolExecutor
 from global_data import global_prediction_results, results_lock
@@ -51,7 +51,6 @@ class DistanceAndPrediction:
         with results_lock:
             if not self.face_detected:
                 global_prediction_results.clear()
-                print("Old data removed\n")
             global_prediction_results.extend(formatted_results)
             self.result_queue.put(formatted_results)
 
