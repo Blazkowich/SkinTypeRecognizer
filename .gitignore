@@ -1,0 +1,5 @@
+# Ignore virtual environments
+.venv/
+venv/
+Skin-Type-1/
+__pycache__/
